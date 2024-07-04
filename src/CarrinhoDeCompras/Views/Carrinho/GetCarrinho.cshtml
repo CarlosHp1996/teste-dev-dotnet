@@ -1,0 +1,100 @@
+﻿@model List<CarrinhoDeCompras.Entities.Carrinho>
+@{
+    ViewData["Title"] = "Carrinho de Compras";
+}
+
+<div class="container">
+    <h2>Itens Disponíveis no Carrinho</h2>
+
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Nome do Produto</th>
+                <th>Quantidade</th>
+                <th>Preço Unitário</th>
+                <th>Preço Total</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var carrinho in Model)
+            {
+                @foreach (var item in carrinho.Itens)
+                {
+                    <tr>
+                        <td>@item.Produto</td>
+                        <td>@item.Quantidade</td>
+                        <td>@item.PrecoUnitario</td>
+                        <td>@(item.Quantidade * item.PrecoUnitario)</td>
+                        <td>
+                            <form asp-action="RemoveItem" asp-route-id="@item.Id" method="post" onsubmit="return confirm('Tem certeza que deseja excluir este item?');">
+                                <button type="submit" class="btn btn-danger">Excluir</button>
+                            </form>
+                            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#updateModal" data-id="@item.Id" data-produto="@item.Produto" data-quantidade="@item.Quantidade" data-preco="@item.PrecoUnitario">Atualizar</button>
+                        </td>
+                    </tr>
+                }
+            }
+        </tbody>
+    </table>
+
+    <!-- Botão de Voltar no canto direito -->
+    <div class="text-right">
+        <a class="btn btn-primary" asp-controller="Home" asp-action="Index">Voltar</a>
+    </div>
+</div>
+
+<!-- Modal -->
+<div class="modal fade" id="updateModal" tabindex="-1" aria-labelledby="updateModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="updateModalLabel">Atualizar Item</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="updateForm" method="post" asp-controller="Carrinho" asp-action="UpdateItemCarrinho">
+                    <input type="hidden" id="itemId" name="Id" />
+                    <div class="mb-3">
+                        <label for="quantidade" class="form-label">Quantidade</label>
+                        <input type="number" class="form-control" id="quantidade" name="Quantidade" required />
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
+                <button type="button" class="btn btn-primary" id="saveChanges">Salvar Alterações</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            var updateModal = document.getElementById('updateModal');
+            updateModal.addEventListener('show.bs.modal', function (event) {
+                var button = event.relatedTarget;
+                var id = button.getAttribute('data-id');
+                var produto = button.getAttribute('data-produto');
+                var quantidade = button.getAttribute('data-quantidade');
+                var preco = button.getAttribute('data-preco');
+
+                var modalId = updateModal.querySelector('#itemId');
+                var modalProduto = updateModal.querySelector('#produto');
+                var modalQuantidade = updateModal.querySelector('#quantidade');
+                var modalPreco = updateModal.querySelector('#preco');
+
+                modalId.value = id;
+                modalProduto.value = produto;
+                modalQuantidade.value = quantidade;
+                modalPreco.value = preco;
+            });
+
+            document.getElementById('saveChanges').addEventListener('click', function () {
+                document.getElementById('updateForm').submit();
+            });
+        });
+    </script>
+}

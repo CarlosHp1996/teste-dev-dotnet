@@ -1,0 +1,36 @@
+-- Criação da base de dados carrinho_de_compras, se ela não existir
+BEGIN
+    CREATE DATABASE carrinho_de_compras;
+END
+GO
+
+-- Utilização da base de dados carrinho_de_compras
+USE carrinho_de_compras;
+GO
+
+-- Criação da tabela Carrinho
+CREATE TABLE Carrinho (
+    Id INT IDENTITY(1,1) PRIMARY KEY
+);
+GO
+
+-- Criação da tabela Carrinho_Itens
+CREATE TABLE Carrinho_Itens (
+    Id INT IDENTITY(1,1) PRIMARY KEY,
+    CarrinhoId INT FOREIGN KEY REFERENCES Carrinho(Id),
+    Produto NVARCHAR(100) NOT NULL,
+    Quantidade INT NOT NULL,
+    PrecoUnitario DECIMAL(18, 2) NOT NULL,
+    PrecoTotal DECIMAL(18, 2) NOT NULL
+);
+GO
+
+-- Inserção de 5 registros na tabela Carrinho
+SET IDENTITY_INSERT Carrinho_Itens ON;
+INSERT INTO Carrinho DEFAULT VALUES;
+INSERT INTO Carrinho DEFAULT VALUES;
+INSERT INTO Carrinho DEFAULT VALUES;
+INSERT INTO Carrinho DEFAULT VALUES;
+INSERT INTO Carrinho DEFAULT VALUES;
+SET IDENTITY_INSERT Carrinho_Itens OFF;
+GO
